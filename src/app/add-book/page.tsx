@@ -38,7 +38,7 @@ const AddBookPage = () => {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const bookData = {
@@ -47,7 +47,15 @@ const AddBookPage = () => {
             totalCopies: Number(formData.totalCopies),
         };
 
-        console.log(bookData);
+        const res = await fetch ("http://localhost:8000/books", {
+            method:"POST",
+            headers: {
+                "Content-Type" : "application/json",
+            },
+            body: JSON.stringify(bookData)
+        })
+        const data=await res.json()
+        console.log(data);
     };
 
     return (
