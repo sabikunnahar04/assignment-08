@@ -44,7 +44,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 border-b border-[#e8e5dc] bg-[#faf9f6] shadow-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
 
-        {/* Logo */}
+        
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#245c45] text-white">
             <BookOpen size={24} />
