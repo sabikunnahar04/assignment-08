@@ -5,7 +5,12 @@ import { useState } from "react";
 import { BookPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -27,6 +32,7 @@ const AddBookPage = () => {
         totalCopies: "",
     });
 
+    // Handle input change
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -38,7 +44,8 @@ const AddBookPage = () => {
         }));
     };
 
-    const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+    // Handle form submit
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const bookData = {
@@ -47,20 +54,43 @@ const AddBookPage = () => {
             totalCopies: Number(formData.totalCopies),
         };
 
-        const res = await fetch ("http://localhost:8000/books", {
-            method:"POST",
-            headers: {
-                "Content-Type" : "application/json",
-            },
-            body: JSON.stringify(bookData)
-        })
-        const data=await res.json()
-        console.log(data);
+        try {
+            const res = await fetch("http://localhost:8000/books", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(bookData),
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to add book");
+            }
+
+            const data = await res.json();
+            console.log(data);
+
+            setFormData({
+                title: "",
+                author: "",
+                image: "",
+                description: "",
+                totalCopies: "",
+            });
+
+            setCategory("");
+
+            console.log("Book added successfully!");
+        } catch (error) {
+            console.error("Error adding book:", error);
+        }
     };
 
     return (
         <main className="min-h-screen bg-[#f4f3ed] px-4 py-12">
             <div className="mx-auto max-w-3xl">
+
+                {/* Heading */}
                 <div className="mb-8 text-center">
                     <div className="mb-3 inline-flex rounded-full bg-[#173f31] p-4 text-white">
                         <BookPlus size={30} />
@@ -75,6 +105,7 @@ const AddBookPage = () => {
                     </p>
                 </div>
 
+               
                 <Card className="border-none shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl text-[#173f31]">
@@ -84,8 +115,12 @@ const AddBookPage = () => {
 
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-5">
+
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Book Title</label>
+                                <label className="text-sm font-medium">
+                                    Book Title
+                                </label>
+
                                 <Input
                                     name="title"
                                     value={formData.title}
@@ -95,8 +130,12 @@ const AddBookPage = () => {
                                 />
                             </div>
 
+                           
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Author Name</label>
+                                <label className="text-sm font-medium">
+                                    Author Name
+                                </label>
+
                                 <Input
                                     name="author"
                                     value={formData.author}
@@ -107,11 +146,17 @@ const AddBookPage = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Category</label>
+                                <label className="text-sm font-medium">
+                                    Category
+                                </label>
+
                                 <Select
                                     value={category}
-                                    onValueChange={(value) => setCategory(value ?? "")}
-                                >                  <SelectTrigger className="w-full">
+                                    onValueChange={(value) =>
+                                        setCategory(value ?? "")
+                                    }
+                                >
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select book category" />
                                     </SelectTrigger>
 
@@ -126,7 +171,10 @@ const AddBookPage = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Book Image URL</label>
+                                <label className="text-sm font-medium">
+                                    Book Image URL
+                                </label>
+
                                 <Input
                                     type="url"
                                     name="image"
@@ -137,8 +185,12 @@ const AddBookPage = () => {
                                 />
                             </div>
 
+                          
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Description</label>
+                                <label className="text-sm font-medium">
+                                    Description
+                                </label>
+
                                 <Textarea
                                     name="description"
                                     value={formData.description}
@@ -149,8 +201,12 @@ const AddBookPage = () => {
                                 />
                             </div>
 
+                           
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Total Copies</label>
+                                <label className="text-sm font-medium">
+                                    Total Copies
+                                </label>
+
                                 <Input
                                     type="number"
                                     name="totalCopies"
@@ -164,16 +220,31 @@ const AddBookPage = () => {
 
                             <div className="grid gap-5 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Added By</label>
-                                    <Input value="BookNook User" readOnly disabled />
+                                    <label className="text-sm font-medium">
+                                        Added By
+                                    </label>
+
+                                    <Input
+                                        value="BookNook User"
+                                        readOnly
+                                        disabled
+                                    />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">User Email</label>
-                                    <Input value="user@example.com" readOnly disabled />
+                                    <label className="text-sm font-medium">
+                                        User Email
+                                    </label>
+
+                                    <Input
+                                        value="user@example.com"
+                                        readOnly
+                                        disabled
+                                    />
                                 </div>
                             </div>
 
+                           
                             <Button
                                 type="submit"
                                 className="w-full bg-[#173f31] text-white hover:bg-[#245943]"
@@ -181,6 +252,7 @@ const AddBookPage = () => {
                                 <BookPlus size={18} />
                                 Add Book
                             </Button>
+
                         </form>
                     </CardContent>
                 </Card>
