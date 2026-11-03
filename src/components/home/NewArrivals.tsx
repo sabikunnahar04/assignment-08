@@ -23,7 +23,7 @@ const NewArrivals = async () => {
             throw new Error("Failed to fetch books");
         }
 
-        books = await res.json();
+       books = (await res.json()).slice(0, 6);
     } catch (error) {
         console.error("Books fetch error:", error);
     }

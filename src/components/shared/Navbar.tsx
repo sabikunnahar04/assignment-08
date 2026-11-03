@@ -17,7 +17,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  // Temporary demo state. পরে Better Auth session ব্যবহার করব।
+  
   const isLoggedIn = false;
 
   const user = {
@@ -55,7 +55,7 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
+       
         <div className="hidden items-center gap-7 lg:flex">
           {navLinks.map((link) => (
             <Link
@@ -68,7 +68,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Desktop Auth Section */}
+       
         <div className="hidden items-center gap-3 lg:flex">
           {!isLoggedIn ? (
             <>
@@ -143,7 +143,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="rounded-lg p-2 text-[#245c45] hover:bg-[#e9eee9] lg:hidden"
@@ -153,7 +153,7 @@ const Navbar = () => {
         </button>
       </nav>
 
-      {/* Mobile Navigation */}
+      
       {isOpen && (
         <div className="border-t border-[#e8e5dc] bg-[#faf9f6] px-5 py-5 lg:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1">
