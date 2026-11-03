@@ -2,135 +2,164 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import React from "react";
 import toast from "react-hot-toast";
+import { UserRound, Mail, BookOpen, ArrowLeft } from "lucide-react";
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Image from "next/image";
 
 const ProfilePage = () => {
     const { data: session, isPending } = authClient.useSession();
     const router = useRouter();
 
-    const onSubmit = async (
-        e: React.FormEvent<HTMLFormElement>
-    ) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
 
-        const user = Object.fromEntries(
-            formData.entries()
-        ) as {
+        const user = Object.fromEntries(formData.entries()) as {
             name: string;
-            email: string;
         };
 
-        // Update Name
+        if (!user.name.trim()) {
+            toast.error("Please enter your name");
+            return;
+        }
+
         const { error } = await authClient.updateUser({
             name: user.name,
         });
 
         if (error) {
-            toast.error("Profile update failed");
-            console.log(error);
+            toast.error(error.message || "Name update failed");
             return;
         }
 
-        // Update Email
-        if (user.email !== session?.user.email) {
-            const result = await authClient.changeEmail({
-                newEmail: user.email,
-                callbackURL: "/profile",
-            });
-
-            if (result.error) {
-                toast.error("Email update failed");
-                console.log(result.error);
-                return;
-            }
-        }
-
-        toast.success("Profile updated successfully");
+        toast.success("Profile updated successfully!");
+        router.refresh();
     };
 
     if (isPending) {
-        return <p className="p-6">Loading...</p>;
+        return (
+            <div className="flex min-h-[70vh] items-center justify-center">
+                <p className="text-muted-foreground">Loading profile...</p>
+            </div>
+        );
     }
 
     if (!session?.user) {
-        redirect("/signin");
+        return (
+            <div className="flex min-h-[70vh] items-center justify-center">
+                <Card className="w-full max-w-md text-center">
+                    <CardContent className="pt-6">
+                        <p className="mb-4">Please sign in to view your profile.</p>
+                        <Link href="/signin">
+                            <Button>
+                                Sign In
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            </div>
+        );
     }
 
-    const handleSignOut = async () => {
-        const { error } = await authClient.signOut();
-
-        if (error) {
-            toast.error("Sign out failed");
-            return;
-        }
-
-        toast.success("Sign out successfully");
-        router.push("/signin");
-    };
-
     return (
-        <div className="min-h-screen bg-base-200 p-6">
-            <div className="card bg-base-100 mx-auto mt-8 max-w-lg shadow-xl">
-                <div className="card-body">
+        <main className="min-h-[80vh] bg-muted/30 px-4 py-12">
+            <div className="mx-auto max-w-2xl">
+                <Link
+                    href="/"
+                    className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-primary"
+                >
+                    <ArrowLeft size={16} />
+                    Back to Home
+                </Link>
 
-                    <h2 className="text-2xl font-bold text-red-700">
-                        My Profile
-                    </h2>
+                <Card className="overflow-hidden border-none shadow-lg">
+                    <div className="h-32 bg-gradient-to-r from-emerald-600 to-teal-500" />
 
-                    <p className="text-sm text-gray-500">
-                        Edit Personal Information
-                    </p>
+                    <CardHeader className="-mt-14 items-center text-center">
+                        <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-background bg-emerald-100 text-emerald-700 shadow-md">
+                            {session.user.image ? (
+                                <Image
+                                    src={session.user.image}
+                                    alt={session.user.name}
+                                    className="h-full w-full rounded-full object-cover"
+                                />
+                            ) : (
+                                <UserRound size={42} />
+                            )}
+                        </div>
 
-                    <form onSubmit={onSubmit} className="mt-4">
+                        <CardTitle className="mt-3 text-2xl">
+                            {session.user.name}
+                        </CardTitle>
 
-                        <label className="label">
-                            <span className="label-text">Name</span>
-                        </label>
+                        <CardDescription>
+                            Welcome to your BookNook profile
+                        </CardDescription>
+                    </CardHeader>
 
-                        <input
-                            name="name"
-                            type="text"
-                            className="input input-bordered w-full"
-                            defaultValue={session.user.name}
-                            required
-                        />
+                    <CardContent className="px-6 pb-8 sm:px-10">
+                        <div className="mb-6 flex items-center justify-center gap-2 text-sm font-medium text-emerald-700">
+                            <BookOpen size={18} />
+                            My Account
+                        </div>
 
-                        <label className="label mt-3">
-                            <span className="label-text">Email</span>
-                        </label>
+                        <form onSubmit={onSubmit} className="space-y-5">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">Full Name</Label>
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    defaultValue={session.user.name}
+                                    placeholder="Enter your name"
+                                    required
+                                />
+                            </div>
 
-                        <input
-                            name="email"
-                            type="email"
-                            className="input input-bordered w-full"
-                            defaultValue={session.user.email}
-                            required
-                        />
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email Address</Label>
+                                <div className="relative">
+                                    <Mail
+                                        size={18}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                                    />
+                                    <Input
+                                        id="email"
+                                        value={session.user.email}
+                                        readOnly
+                                        className="bg-muted pl-10"
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Your email address cannot be changed here.
+                                </p>
+                            </div>
 
-                        <button
-                            type="submit"
-                            className="btn bg-green-900 text-white w-full mt-5"
-                        >
-                           Update
-                        </button>
-                    </form>
-
-                    <div className="divider">Account</div>
-
-                    <button
-                        onClick={handleSignOut}
-                        className="btn btn-error btn-outline w-full"
-                    >
-                        SignOut
-                    </button>
-
-                </div>
+                            <Button
+                                type="submit"
+                                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                            >
+                                Update Profile
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
             </div>
-        </div>
+        </main>
     );
 };
 

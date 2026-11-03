@@ -2,6 +2,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 
 interface Book {
   _id: string;
@@ -19,6 +22,15 @@ const BookDetailsPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
+
+  // Check logged-in user
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    redirect("/signin");
+  }
 
   const res = await fetch(`http://localhost:8000/books/${id}`, {
     cache: "no-store",
@@ -67,7 +79,10 @@ const BookDetailsPage = async ({
             </h1>
 
             <p className="text-gray-500">
-              By <span className="font-semibold text-gray-700">{book.author}</span>
+              By{" "}
+              <span className="font-semibold text-gray-700">
+                {book.author}
+              </span>
             </p>
 
             <div>
