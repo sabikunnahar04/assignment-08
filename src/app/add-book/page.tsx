@@ -3,6 +3,9 @@
 
 import { useState } from "react";
 import { BookPlus } from "lucide-react";
+import { redirect } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +25,8 @@ import {
 } from "@/components/ui/select";
 
 const AddBookPage = () => {
+    const { data: session, isPending } = authClient.useSession();
+
     const [category, setCategory] = useState("");
 
     const [formData, setFormData] = useState({
@@ -32,7 +37,18 @@ const AddBookPage = () => {
         totalCopies: "",
     });
 
-    // Handle input change
+   
+    if (isPending) {
+        return <p className="py-20 text-center">Loading...</p>;
+    }
+
+    if (!session?.user) {
+        redirect("/signin");
+    }
+
+    const user = session.user;
+
+  
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -44,14 +60,22 @@ const AddBookPage = () => {
         }));
     };
 
-    // Handle form submit
+   
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!category) {
+            toast.error("Please select a category");
+            return;
+        }
 
         const bookData = {
             ...formData,
             category,
             totalCopies: Number(formData.totalCopies),
+            addedBy: user.email,
+            addedByName: user.name,
+            dateAdded: new Date().toISOString(),
         };
 
         try {
@@ -67,8 +91,9 @@ const AddBookPage = () => {
                 throw new Error("Failed to add book");
             }
 
-            const data = await res.json();
-            console.log(data);
+            await res.json();
+
+            toast.success("Book added successfully!");
 
             setFormData({
                 title: "",
@@ -80,9 +105,9 @@ const AddBookPage = () => {
 
             setCategory("");
 
-            console.log("Book added successfully!");
         } catch (error) {
             console.error("Error adding book:", error);
+            toast.error("Failed to add book");
         }
     };
 
@@ -90,7 +115,6 @@ const AddBookPage = () => {
         <main className="min-h-screen bg-[#f4f3ed] px-4 py-12">
             <div className="mx-auto max-w-3xl">
 
-                {/* Heading */}
                 <div className="mb-8 text-center">
                     <div className="mb-3 inline-flex rounded-full bg-[#173f31] p-4 text-white">
                         <BookPlus size={30} />
@@ -105,7 +129,6 @@ const AddBookPage = () => {
                     </p>
                 </div>
 
-               
                 <Card className="border-none shadow-md">
                     <CardHeader>
                         <CardTitle className="text-xl text-[#173f31]">
@@ -120,7 +143,6 @@ const AddBookPage = () => {
                                 <label className="text-sm font-medium">
                                     Book Title
                                 </label>
-
                                 <Input
                                     name="title"
                                     value={formData.title}
@@ -130,12 +152,10 @@ const AddBookPage = () => {
                                 />
                             </div>
 
-                           
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">
                                     Author Name
                                 </label>
-
                                 <Input
                                     name="author"
                                     value={formData.author}
@@ -174,7 +194,6 @@ const AddBookPage = () => {
                                 <label className="text-sm font-medium">
                                     Book Image URL
                                 </label>
-
                                 <Input
                                     type="url"
                                     name="image"
@@ -185,12 +204,10 @@ const AddBookPage = () => {
                                 />
                             </div>
 
-                          
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">
                                     Description
                                 </label>
-
                                 <Textarea
                                     name="description"
                                     value={formData.description}
@@ -201,12 +218,10 @@ const AddBookPage = () => {
                                 />
                             </div>
 
-                           
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">
                                     Total Copies
                                 </label>
-
                                 <Input
                                     type="number"
                                     name="totalCopies"
@@ -223,28 +238,17 @@ const AddBookPage = () => {
                                     <label className="text-sm font-medium">
                                         Added By
                                     </label>
-
-                                    <Input
-                                        value="BookNook User"
-                                        readOnly
-                                        disabled
-                                    />
+                                    <Input value={user.name} readOnly disabled />
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">
                                         User Email
                                     </label>
-
-                                    <Input
-                                        value="user@example.com"
-                                        readOnly
-                                        disabled
-                                    />
+                                    <Input value={user.email} readOnly disabled />
                                 </div>
                             </div>
 
-                           
                             <Button
                                 type="submit"
                                 className="w-full bg-[#173f31] text-white hover:bg-[#245943]"

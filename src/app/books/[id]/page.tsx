@@ -2,9 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
+
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import BorrowBookButton from "../BorrowBookButton";
 
 interface Book {
   _id: string;
@@ -99,12 +101,14 @@ const BookDetailsPage = async ({
               Available Copies: {book.totalCopies}
             </p>
 
-            <button
-              disabled
-              className="w-full cursor-not-allowed rounded-lg bg-gray-400 px-6 py-3 font-semibold text-white"
-            >
-              Borrow Book (Coming Soon)
-            </button>
+            <BorrowBookButton
+  bookId={book._id}
+  bookTitle={book.title}
+  bookImage={book.image}
+  totalCopies={book.totalCopies}
+  userName={session.user.name}
+  userEmail={session.user.email}
+/>
           </div>
         </div>
       </div>
