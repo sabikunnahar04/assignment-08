@@ -22,7 +22,7 @@ interface MyBooksListProps {
 const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
   const [bookList, setBookList] = useState(books);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
-//   const [deletingBook, setDeletingBook] = useState<Book | null>(null);
+  const [deletingBook, setDeletingBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
     totalCopies: "",
   });
 
-  // Open Edit Form
+
   const handleEdit = (book: Book) => {
     setEditingBook(book);
 
@@ -48,7 +48,7 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
     });
   };
 
-  // Input Change
+ 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -60,7 +60,7 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
     }));
   };
 
-  
+ 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -112,7 +112,40 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
     }
   };
 
+ 
+  const handleDelete = async () => {
+    if (!deletingBook) return;
 
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `http://localhost:8000/books/${deletingBook._id}?email=${encodeURIComponent(userEmail)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "Failed to delete book");
+        return;
+      }
+
+      setBookList((prev) =>
+        prev.filter((book) => book._id !== deletingBook._id)
+      );
+
+      toast.success("Book deleted successfully!");
+      setDeletingBook(null);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -160,12 +193,12 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
                   Edit
                 </button>
 
-                {/* <button
+                <button
                   onClick={() => setDeletingBook(book)}
                   className="flex-1 rounded-lg bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700"
                 >
                   Delete
-                </button> */}
+                </button>
               </div>
             </div>
           ))}
@@ -297,7 +330,42 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
         </div>
       )}
 
-  
+     
+      {deletingBook && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="text-xl font-bold text-[#173f31]">
+              Delete Book?
+            </h2>
+
+            <p className="my-4 text-gray-600">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-[#173f31]">
+                {deletingBook.title}
+              </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeletingBook(null)}
+                disabled={loading}
+                className="flex-1 rounded-lg border px-4 py-2 font-semibold"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex-1 rounded-lg bg-red-600 px-4 py-2 font-semibold text-white disabled:opacity-50"
+              >
+                {loading ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
