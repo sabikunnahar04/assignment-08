@@ -18,18 +18,23 @@ const MyBorrowsPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-
-  if (!session?.user) {
-    redirect("/signin");
-  }
+if (!session?.user) {
+  redirect("/signin");
+}
+ const jwtToken = await auth.api.getToken({
+  headers: await headers(),
+});
 
   const res = await fetch(
     `http://localhost:8000/my-borrows?email=${encodeURIComponent(
       session.user.email
     )}`,
-    {
-      cache: "no-store",
-    }
+   {
+  cache: "no-store",
+  headers: {
+    Authorization: `Bearer ${jwtToken?.token}`,
+  },
+}
   );
 
   if (!res.ok) {
