@@ -27,7 +27,7 @@ const MyBorrowsList = ({ borrows , jwtToken}: MyBorrowsListProps) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/borrows/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/borrows/${id}`,
         {
           method: "DELETE",
           headers: {

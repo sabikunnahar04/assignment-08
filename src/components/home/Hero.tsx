@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -16,21 +17,21 @@ const slides = [
     description:
       "Explore a world of stories, knowledge, and imagination. Find the perfect book for your next reading journey.",
     image:
-      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1400",
+      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1400",
   },
   {
     title: "A Little Reading Goes a Long Way",
     description:
       "Make reading a part of your everyday life. Discover inspiring books and enjoy every page.",
     image:
-      "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=1400",
+      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=1400",
   },
   {
     title: "Share Stories, Share Knowledge",
     description:
       "Add books, borrow books, and share your favorite reads with the BookNook community.",
     image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1400",
+      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1400",
   },
 ];
 
@@ -40,7 +41,6 @@ const Hero = () => {
   return (
     <section className="mx-auto max-w-7xl px-5 py-8">
       <div className="relative overflow-hidden rounded-2xl">
-
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
@@ -60,16 +60,14 @@ const Hero = () => {
           {slides.map((slide) => (
             <SwiperSlide key={slide.title}>
               <div
-                className="relative flex min-h-[420px] items-center bg-cover bg-center md:min-h-[500px]"
+                className="relative flex min-h-[420px] items-center justify-center bg-cover bg-center text-center md:min-h-[500px]"
                 style={{
                   backgroundImage: `url(${slide.image})`,
                 }}
               >
-              
                 <div className="absolute inset-0 bg-black/55" />
 
-               
-                <div className="relative z-10 max-w-2xl px-8 py-16 text-white md:px-16">
+                <div className="relative z-10 mx-auto max-w-3xl px-8 py-16 text-white">
                   <p className="mb-4 font-semibold uppercase tracking-[3px] text-[#e4c58a]">
                     Welcome to BookNook
                   </p>
@@ -78,7 +76,7 @@ const Hero = () => {
                     {slide.title}
                   </h1>
 
-                  <p className="mb-8 text-sm leading-7 text-gray-200 md:text-base">
+                  <p className="mx-auto mb-8 max-w-2xl text-sm leading-7 text-gray-200 md:text-base">
                     {slide.description}
                   </p>
 
@@ -94,7 +92,6 @@ const Hero = () => {
           ))}
         </Swiper>
 
-       
         <button
           onClick={() => swiperRef.current?.slidePrev()}
           aria-label="Previous slide"
@@ -103,7 +100,6 @@ const Hero = () => {
           <ChevronLeft size={25} />
         </button>
 
-       
         <button
           onClick={() => swiperRef.current?.slideNext()}
           aria-label="Next slide"
@@ -112,12 +108,8 @@ const Hero = () => {
           <ChevronRight size={25} />
         </button>
 
-       
         <div className="hero-pagination absolute! bottom-6! left-1/2! z-20 flex! -translate-x-1/2 justify-center gap-2" />
-
       </div>
-
-     
     </section>
   );
 };

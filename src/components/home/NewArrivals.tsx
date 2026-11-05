@@ -15,7 +15,7 @@ const NewArrivals = async () => {
     let books: Book[] = [];
 
     try {
-        const res = await fetch("http://localhost:8000/books", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books`, {
             cache: "no-store",
         });
 

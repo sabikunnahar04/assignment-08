@@ -122,7 +122,7 @@ const MyBooksList = ({ books, userEmail,jwtToken }: MyBooksListProps) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8000/books/${deletingBook._id}?email=${encodeURIComponent(userEmail)}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/books/${deletingBook._id}?email=${encodeURIComponent(userEmail)}`,
         {
           method: "DELETE",
            headers: {

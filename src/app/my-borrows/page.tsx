@@ -26,7 +26,7 @@ if (!session?.user) {
 });
 
   const res = await fetch(
-    `http://localhost:8000/my-borrows?email=${encodeURIComponent(
+    `${process.env.NEXT_PUBLIC_API_URL}/my-borrows?email=${encodeURIComponent(
       session.user.email
     )}`,
    {

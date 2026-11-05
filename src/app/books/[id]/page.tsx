@@ -40,7 +40,7 @@ const BookDetailsPage = async ({
 
 console.log(jwtToken?.token);
 
- const res = await fetch(`http://localhost:8000/books/${id}`, {
+ const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books/${id}`, {
   cache: "no-store",
   headers: {
     Authorization: `Bearer ${jwtToken?.token}`,
@@ -54,7 +54,7 @@ console.log(jwtToken?.token);
   const book: Book = await res.json();
 
  const borrowRes = await fetch(
-  `http://localhost:8000/my-borrows?email=${encodeURIComponent(session.user.email)}`,
+  `${process.env.NEXT_PUBLIC_API_URL}/my-borrows?email=${encodeURIComponent(session.user.email)}`,
   {
     cache: "no-store",
     headers: {

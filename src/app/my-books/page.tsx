@@ -27,7 +27,7 @@ const MyBooksPage = async () => {
 });
 
   const res = await fetch(
-    `http://localhost:8000/my-books?email=${encodeURIComponent(
+    `${process.env.NEXT_PUBLIC_API_URL}/my-books?email=${encodeURIComponent(
       session.user.email
     )}`,
    {

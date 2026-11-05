@@ -1,14 +1,11 @@
 
-import Link from "next/link";
 import {
   BookOpen,
   Clock,
   Heart,
   BookText,
-  FlaskConical,
-  Landmark,
-  Baby,
-  Library,
+  Bookmark,
+  Lightbulb,
 } from "lucide-react";
 
 const features = [
@@ -29,18 +26,31 @@ const features = [
   },
 ];
 
-const categories = [
-  { name: "Fiction", icon: <BookText size={30} /> },
-  { name: "Science", icon: <FlaskConical size={30} /> },
-  { name: "History", icon: <Landmark size={30} /> },
-  { name: "Kids", icon: <Baby size={30} /> },
-  { name: "Others", icon: <Library size={30} /> },
+const readingTips = [
+  {
+    icon: <BookText size={30} />,
+    title: "Make Reading a Daily Habit",
+    description:
+      "Spend at least 15–20 minutes every day reading a book. Small steps can build a great habit.",
+  },
+  {
+    icon: <Bookmark size={30} />,
+    title: "Keep a Reading List",
+    description:
+      "Make a list of books you want to read and keep track of your reading journey.",
+  },
+  {
+    icon: <Lightbulb size={30} />,
+    title: "Explore Different Genres",
+    description:
+      "Try fiction, science, history, and other genres to discover new interests and ideas.",
+  },
 ];
 
 const ExtraSections = () => {
   return (
     <>
-      {/* Why Choose BookNook */}
+      
       <section className="bg-[#f4f3ed] px-6 py-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 text-center">
@@ -75,31 +85,36 @@ const ExtraSections = () => {
         </div>
       </section>
 
-      {/* Book Categories */}
+      
       <section className="bg-white px-6 py-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-bold text-[#245c45]">
-              Explore Book Categories
+              Tips for Every Book Lover
             </h2>
             <p className="mt-3 text-gray-600">
-              Find books that match your interests.
+              A few simple tips to make your reading journey more enjoyable.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
-            {categories.map((category) => (
-              <Link
-                key={category.name}
-                href={`/books?category=${category.name}`}
-                className="flex flex-col items-center gap-4 rounded-xl border border-[#e8e5dc] bg-[#faf9f6] p-7 text-center transition hover:-translate-y-1 hover:border-[#245c45] hover:shadow-md"
+          <div className="grid gap-6 md:grid-cols-3">
+            {readingTips.map((tip) => (
+              <div
+                key={tip.title}
+                className="rounded-xl border border-[#e8e5dc] bg-[#faf9f6] p-8 text-center transition hover:-translate-y-1 hover:shadow-md"
               >
-                <div className="text-[#245c45]">{category.icon}</div>
+                <div className="mb-4 flex justify-center text-[#245c45]">
+                  {tip.icon}
+                </div>
 
-                <h3 className="font-semibold text-[#343a35]">
-                  {category.name}
+                <h3 className="mb-3 text-xl font-semibold text-[#245c45]">
+                  {tip.title}
                 </h3>
-              </Link>
+
+                <p className="text-sm leading-6 text-gray-600">
+                  {tip.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>
