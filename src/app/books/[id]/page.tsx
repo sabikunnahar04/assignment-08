@@ -134,6 +134,7 @@ const alreadyBorrowed = borrows.some(
               totalCopies={book.totalCopies}
               userName={session.user.name}
               userEmail={session.user.email}
+              jwtToken={jwtToken?.token ?? ""}
             />
           </div>
         </div>

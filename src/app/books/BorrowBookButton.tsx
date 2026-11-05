@@ -12,6 +12,7 @@ interface BorrowBookButtonProps {
   alreadyBorrowed: boolean;
   userName: string;
   userEmail: string;
+  jwtToken: string;
 }
 
 const BorrowBookButton = ({
@@ -22,13 +23,14 @@ const BorrowBookButton = ({
   alreadyBorrowed,
   userName,
   userEmail,
+  jwtToken,
 }: BorrowBookButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Keep available copies updated
+  
   const [availableCopies, setAvailableCopies] = useState(totalCopies);
 
-  // Check whether the user already borrowed this book
+
   const [hasBorrowed, setHasBorrowed] = useState(alreadyBorrowed);
 
   const [borrowDate, setBorrowDate] = useState(
@@ -60,8 +62,9 @@ const BorrowBookButton = ({
       const res = await fetch("http://localhost:8000/borrows", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-        },
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${jwtToken}`,
+},
         body: JSON.stringify(borrowData),
       });
 
@@ -71,7 +74,7 @@ const BorrowBookButton = ({
         throw new Error(result.message || "Failed to borrow book");
       }
 
-      // Update UI immediately after successful borrowing
+     
       setAvailableCopies((prev) => Math.max(0, prev - 1));
       setHasBorrowed(true);
 
