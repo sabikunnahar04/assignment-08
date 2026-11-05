@@ -54,7 +54,10 @@ if (!session?.user) {
           Books you have borrowed from BookNook.
         </p>
 
-        <MyBorrowsList borrows={borrows} />
+        <MyBorrowsList 
+        borrows={borrows} 
+        jwtToken={jwtToken?.token ?? ""}
+        />
       </div>
     </main>
   );

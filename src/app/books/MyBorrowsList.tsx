@@ -13,8 +13,12 @@ interface Borrow {
   borrowDate: string;
   returnDate: string;
 }
+interface MyBorrowsListProps {
+  borrows: Borrow[];
+  jwtToken: string;
+}
 
-const MyBorrowsList = ({ borrows }: { borrows: Borrow[] }) => {
+const MyBorrowsList = ({ borrows , jwtToken}: MyBorrowsListProps) => {
   const [borrowList, setBorrowList] = useState(borrows);
   const [loadingId, setLoadingId] = useState("");
 
@@ -26,6 +30,9 @@ const MyBorrowsList = ({ borrows }: { borrows: Borrow[] }) => {
         `http://localhost:8000/borrows/${id}`,
         {
           method: "DELETE",
+          headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
         }
       );
 
