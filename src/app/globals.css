@@ -128,3 +128,17 @@
     @apply font-sans;
   }
 }
+
+.hero-pagination .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: white;
+  opacity: 0.7;
+}
+
+.hero-pagination .swiper-pagination-bullet-active {
+  width: 32px;
+  border-radius: 10px;
+  background: #c8a96b;
+  opacity: 1;
+}

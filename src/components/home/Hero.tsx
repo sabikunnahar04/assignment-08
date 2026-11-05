@@ -1,9 +1,14 @@
-
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useRef } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import "swiper/css";
+import "swiper/css/pagination";
 
 const slides = [
   {
@@ -30,85 +35,89 @@ const slides = [
 ];
 
 const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide(
-      (prev) => (prev - 1 + slides.length) % slides.length
-    );
-  };
-
-  const slide = slides[currentSlide];
+  const swiperRef = useRef<SwiperType | null>(null);
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-8">
-      <div
-        className="relative flex min-h-[420px] items-center overflow-hidden rounded-2xl bg-cover bg-center md:min-h-[500px]"
-        style={{ backgroundImage: `url(${slide.image})` }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/55"></div>
+      <div className="relative overflow-hidden rounded-2xl">
 
-        {/* Content */}
-        <div className="relative z-10 max-w-2xl px-8 py-16 text-white md:px-16">
-          <p className="mb-4 font-semibold uppercase tracking-[3px] text-[#e4c58a]">
-            Welcome to BookNook
-          </p>
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          loop={true}
+          autoplay={{
+            delay: 4000,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            clickable: true,
+            el: ".hero-pagination",
+          }}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          className="w-full"
+        >
+          {slides.map((slide) => (
+            <SwiperSlide key={slide.title}>
+              <div
+                className="relative flex min-h-[420px] items-center bg-cover bg-center md:min-h-[500px]"
+                style={{
+                  backgroundImage: `url(${slide.image})`,
+                }}
+              >
+              
+                <div className="absolute inset-0 bg-black/55" />
 
-          <h1 className="mb-5 text-3xl font-bold leading-tight md:text-5xl">
-            {slide.title}
-          </h1>
+               
+                <div className="relative z-10 max-w-2xl px-8 py-16 text-white md:px-16">
+                  <p className="mb-4 font-semibold uppercase tracking-[3px] text-[#e4c58a]">
+                    Welcome to BookNook
+                  </p>
 
-          <p className="mb-8 text-sm leading-7 text-gray-200 md:text-base">
-            {slide.description}
-          </p>
+                  <h1 className="mb-5 text-3xl font-bold leading-tight md:text-5xl">
+                    {slide.title}
+                  </h1>
 
-          <Link
-            href="/books"
-            className="inline-block rounded-lg bg-[#c8a96b] px-7 py-3 font-semibold text-[#173f31] transition hover:bg-[#e0c58f]"
-          >
-            Browse Books
-          </Link>
-        </div>
+                  <p className="mb-8 text-sm leading-7 text-gray-200 md:text-base">
+                    {slide.description}
+                  </p>
 
-        {/* Previous Button */}
+                  <Link
+                    href="/books"
+                    className="inline-block rounded-lg bg-[#c8a96b] px-7 py-3 font-semibold text-[#173f31] transition hover:bg-[#e0c58f]"
+                  >
+                    Browse Books
+                  </Link>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+       
         <button
-          onClick={prevSlide}
+          onClick={() => swiperRef.current?.slidePrev()}
           aria-label="Previous slide"
           className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur hover:bg-white/40"
         >
           <ChevronLeft size={25} />
         </button>
 
-        {/* Next Button */}
+       
         <button
-          onClick={nextSlide}
+          onClick={() => swiperRef.current?.slideNext()}
           aria-label="Next slide"
           className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur hover:bg-white/40"
         >
           <ChevronRight size={25} />
         </button>
 
-        {/* Dots */}
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-3">
-          {slides.map((item, index) => (
-            <button
-              key={item.title}
-              onClick={() => setCurrentSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              className={`h-2.5 rounded-full transition-all ${
-                currentSlide === index
-                  ? "w-8 bg-[#c8a96b]"
-                  : "w-2.5 bg-white/70"
-              }`}
-            />
-          ))}
-        </div>
+       
+        <div className="hero-pagination absolute! bottom-6! left-1/2! z-20 flex! -translate-x-1/2 justify-center gap-2" />
+
       </div>
+
+     
     </section>
   );
 };

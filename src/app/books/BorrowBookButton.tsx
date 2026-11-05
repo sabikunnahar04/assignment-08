@@ -9,6 +9,7 @@ interface BorrowBookButtonProps {
   bookTitle: string;
   bookImage: string;
   totalCopies: number;
+  alreadyBorrowed: boolean;
   userName: string;
   userEmail: string;
 }
@@ -18,10 +19,18 @@ const BorrowBookButton = ({
   bookTitle,
   bookImage,
   totalCopies,
+  alreadyBorrowed,
   userName,
   userEmail,
 }: BorrowBookButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Keep available copies updated
+  const [availableCopies, setAvailableCopies] = useState(totalCopies);
+
+  // Check whether the user already borrowed this book
+  const [hasBorrowed, setHasBorrowed] = useState(alreadyBorrowed);
+
   const [borrowDate, setBorrowDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -62,6 +71,10 @@ const BorrowBookButton = ({
         throw new Error(result.message || "Failed to borrow book");
       }
 
+      // Update UI immediately after successful borrowing
+      setAvailableCopies((prev) => Math.max(0, prev - 1));
+      setHasBorrowed(true);
+
       toast.success("Book borrowed successfully!");
       setIsOpen(false);
       setReturnDate("");
@@ -76,12 +89,20 @@ const BorrowBookButton = ({
 
   return (
     <>
+      <p className="font-medium text-gray-600">
+        Available Copies: {availableCopies}
+      </p>
+
       <button
         onClick={() => setIsOpen(true)}
-        disabled={totalCopies <= 0}
+        disabled={availableCopies <= 0 || hasBorrowed}
         className="w-full rounded-lg bg-[#173f31] px-6 py-3 font-semibold text-white transition hover:bg-[#245c45] disabled:cursor-not-allowed disabled:bg-gray-400"
       >
-        {totalCopies > 0 ? "Borrow Book" : "Not Available"}
+        {hasBorrowed
+          ? "Already Borrowed"
+          : availableCopies <= 0
+            ? "Not Available"
+            : "Borrow Book"}
       </button>
 
       {isOpen && (

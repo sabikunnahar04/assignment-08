@@ -25,7 +25,7 @@ const BookDetailsPage = async ({
 }) => {
   const { id } = await params;
 
-  // Check logged-in user
+ 
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -43,6 +43,17 @@ const BookDetailsPage = async ({
   }
 
   const book: Book = await res.json();
+
+  const borrowRes = await fetch(
+  `http://localhost:8000/my-borrows?email=${encodeURIComponent(session.user.email)}`,
+  { cache: "no-store" }
+);
+
+const borrows = await borrowRes.json();
+
+const alreadyBorrowed = borrows.some(
+  (borrow: { bookId: string }) => borrow.bookId === book._id
+);
 
   if (!book) {
     return <p className="py-20 text-center">Book not found!</p>;
@@ -102,13 +113,14 @@ const BookDetailsPage = async ({
             </p>
 
             <BorrowBookButton
-  bookId={book._id}
-  bookTitle={book.title}
-  bookImage={book.image}
-  totalCopies={book.totalCopies}
-  userName={session.user.name}
-  userEmail={session.user.email}
-/>
+              bookId={book._id}
+              bookTitle={book.title}
+              bookImage={book.image}
+              alreadyBorrowed={alreadyBorrowed}
+              totalCopies={book.totalCopies}
+              userName={session.user.name}
+              userEmail={session.user.email}
+            />
           </div>
         </div>
       </div>
