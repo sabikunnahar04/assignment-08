@@ -22,14 +22,20 @@ const MyBooksPage = async () => {
   if (!session?.user) {
     redirect("/signin");
   }
+  const jwtToken = await auth.api.getToken({
+  headers: await headers(),
+});
 
   const res = await fetch(
     `http://localhost:8000/my-books?email=${encodeURIComponent(
       session.user.email
     )}`,
-    {
-      cache: "no-store",
-    }
+   {
+  cache: "no-store",
+  headers: {
+    Authorization: `Bearer ${jwtToken?.token}`,
+  },
+}
   );
 
   if (!res.ok) {

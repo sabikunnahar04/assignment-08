@@ -34,9 +34,18 @@ const BookDetailsPage = async ({
     redirect("/signin");
   }
 
-  const res = await fetch(`http://localhost:8000/books/${id}`, {
-    cache: "no-store",
-  });
+  const jwtToken = await auth.api.getToken({
+  headers: await headers(),
+});
+
+console.log(jwtToken?.token);
+
+ const res = await fetch(`http://localhost:8000/books/${id}`, {
+  cache: "no-store",
+  headers: {
+    Authorization: `Bearer ${jwtToken?.token}`,
+  },
+});
 
   if (!res.ok) {
     throw new Error("Failed to fetch book details");
@@ -44,9 +53,14 @@ const BookDetailsPage = async ({
 
   const book: Book = await res.json();
 
-  const borrowRes = await fetch(
+ const borrowRes = await fetch(
   `http://localhost:8000/my-borrows?email=${encodeURIComponent(session.user.email)}`,
-  { cache: "no-store" }
+  {
+    cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${jwtToken?.token}`,
+    },
+  }
 );
 
 const borrows = await borrowRes.json();
