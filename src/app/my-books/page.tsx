@@ -58,6 +58,7 @@ const MyBooksPage = async () => {
         <MyBooksList
           books={books}
           userEmail={session.user.email}
+          jwtToken={jwtToken?.token??""}
         />
       </div>
     </main>

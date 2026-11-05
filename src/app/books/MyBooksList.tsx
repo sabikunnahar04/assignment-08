@@ -17,9 +17,10 @@ interface Book {
 interface MyBooksListProps {
   books: Book[];
   userEmail: string;
+  jwtToken: string,
 }
 
-const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
+const MyBooksList = ({ books, userEmail,jwtToken }: MyBooksListProps) => {
   const [bookList, setBookList] = useState(books);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [deletingBook, setDeletingBook] = useState<Book | null>(null);
@@ -74,8 +75,9 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
-          },
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${jwtToken}`,
+},
           body: JSON.stringify({
             ...formData,
             totalCopies: Number(formData.totalCopies),
@@ -123,6 +125,9 @@ const MyBooksList = ({ books, userEmail }: MyBooksListProps) => {
         `http://localhost:8000/books/${deletingBook._id}?email=${encodeURIComponent(userEmail)}`,
         {
           method: "DELETE",
+           headers: {
+    Authorization: `Bearer ${jwtToken}`,
+  },
         }
       );
 
